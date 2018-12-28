@@ -158,36 +158,36 @@ module Database
       end
     end
   # ===============MIGRATED============================#
-  def insert!
-    self[:created_at] = DateTime.now
-    self[:updated_at] = DateTime.now
+    def insert!
+      self[:created_at] = DateTime.now
+      self[:updated_at] = DateTime.now
 
-    fields = self.attributes.keys
-    values = self.attributes.values
-    marks  = Array.new(fields.length) { '?' }.join(',')
+      fields = self.attributes.keys
+      values = self.attributes.values
+      marks  = Array.new(fields.length) { '?' }.join(',')
 
-    insert_sql = "INSERT INTO #{self.class.table_name} (#{fields.join(',')}) VALUES (#{marks})"
+      insert_sql = "INSERT INTO #{self.class.table_name} (#{fields.join(',')}) VALUES (#{marks})"
 
-    results = Database::Model.execute(insert_sql, *values)
+      results = Database::Model.execute(insert_sql, *values)
 
-    # This fetches the new primary key and updates this instance
-    self[:id] = Database::Model.last_insert_row_id
-    results
-  end
+      # This fetches the new primary key and updates this instance
+      self[:id] = Database::Model.last_insert_row_id
+      results
+    end
 
-  def update!
-    self[:updated_at] = DateTime.now
+    def update!
+      self[:updated_at] = DateTime.now
 
-    fields = self.attributes.keys
-    values = self.attributes.values
+      fields = self.class.attributes.keys
+      values = self.class.attributes.values
 
-    update_clause = fields.map { |field| "#{field} = ?" }.join(',')
-    update_sql = "UPDATE #{self.class.table_name} SET #{update_clause} WHERE id = ?"
+      update_clause = fields.map { |field| "#{field} = ?" }.join(',')
+      update_sql = "UPDATE #{self.class.table_name} SET #{update_clause} WHERE id = ?"
 
-    # We have to use the (potentially) old ID attributein case the user has re-set it.
-    Database::Model.execute(update_sql, *values, self.old_attributes[:id])
-  end
+      # We have to use the (potentially) old ID attributein case the user has re-set it.
+      Database::Model.execute(update_sql, *values, self.old_attributes[:id])
+    end
 
-  # ===============MIGRATED END================= #
-  end
+    # ===============MIGRATED END================= #
+    end
 end
