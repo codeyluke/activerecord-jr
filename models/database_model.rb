@@ -17,7 +17,7 @@ module Database
     end
     # ===============MIGRATED========= #
     def self.all
-      Database::Model.execute("SELECT * FROM cohorts").map do |row|
+      Database::Model.execute("SELECT * FROM #{self.table_name}").map do |row|
         self.new(row)
       end
     end
